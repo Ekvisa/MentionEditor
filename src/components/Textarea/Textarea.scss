@@ -1,0 +1,51 @@
+.textarea {
+  border-bottom-left-radius: 1em;
+}
+
+ul {
+  padding: 0;
+  background: #80808038;
+  margin: 0;
+  max-height: 200px;
+  overflow-y: auto;
+  li {
+    display: flex;
+    align-items: center;
+    padding: 1em;
+    gap: 1em;
+    &.active {
+      background-color: #adadadad;
+    }
+    p {
+      margin: 0;
+      &.avatar {
+        background: #b39863;
+        border-radius: 50%;
+        width: 2em;
+        height: 2em;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+      }
+      &.fullname {
+        font-weight: bold;
+      }
+      &.username {
+        color: gray;
+      }
+    }
+  }
+}
+
+.mirror {
+  opacity: 0.5;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: wheat;
+
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow: hidden;
+}
