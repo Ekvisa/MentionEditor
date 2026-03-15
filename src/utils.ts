@@ -76,14 +76,13 @@ export function updateMirror(
   value: string,
   cursor: number,
 ) {
-  mirror.scrollTop = textarea.scrollTop; //
-  mirror.style.width = textarea.offsetWidth + "px";
-  mirror.style.height = textarea.offsetHeight + "px";
   const before = value.slice(0, cursor);
   const after = value.slice(cursor);
-
   mirror.innerHTML =
     escapeHtml(before) + '<span id="caret"></span>' + escapeHtml(after);
+  mirror.style.width = textarea.offsetWidth + "px";
+  mirror.style.height = textarea.offsetHeight + "px";
+  mirror.scrollTop = textarea.scrollTop; //
 }
 
 // export function getCaretCoordinates(mirror: HTMLDivElement) {
