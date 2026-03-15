@@ -30,7 +30,7 @@ function Textarea() {
 
       updateMirror(mirror, textarea, value, cursor);
 
-      const caretCoords = getCaretCoordinates(mirror);
+      const caretCoords = getCaretCoordinates(mirror, textarea);
 
       if (caretCoords) {
         setCaret({
@@ -78,7 +78,7 @@ function Textarea() {
 
     const mirror = mirrorRef.current;
     updateMirror(mirror, textarea, value, cursor);
-    const caretCoords = getCaretCoordinates(mirror);
+    const caretCoords = getCaretCoordinates(mirror, textarea);
 
     if (caretCoords) {
       setCaret({
@@ -161,7 +161,7 @@ function Textarea() {
           style={{
             left: `${caret.left}px`,
             top: `${caret.top}px`,
-            position: "fixed", // ?
+            // position: "fixed", // ?
           }}
         >
           {suggestions.map((user, index) => {

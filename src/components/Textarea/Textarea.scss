@@ -2,12 +2,13 @@
   border-bottom-left-radius: 1em;
 }
 
-ul {
+.dropdown {
   padding: 0;
   background: #80808038;
   margin: 0;
   max-height: 16em; //4 items
   overflow-y: auto;
+  position: absolute;
   li {
     display: flex;
     align-items: center;
@@ -15,6 +16,10 @@ ul {
     gap: 1em;
     &.active {
       background-color: #adadadad;
+    }
+    &:hover {
+      background-color: #adadadad;
+      cursor: pointer;
     }
     p {
       margin: 0;
@@ -41,7 +46,11 @@ ul {
 .mirror {
   opacity: 0.5;
   background: wheat;
-
   word-wrap: break-word;
   overflow: hidden;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  box-sizing: border-box;
+  white-space: pre-wrap;
 }
