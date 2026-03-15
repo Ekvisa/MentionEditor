@@ -1,6 +1,6 @@
 import "./Textarea.scss";
 import { users } from "../../users";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createMirror, getCaretCoordinates, updateMirror } from "../../utils";
 
 function Textarea() {
@@ -14,13 +14,43 @@ function Textarea() {
   );
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const mirrorRef = useRef<HTMLDivElement | null>(null);
+  const mirrorRef = useRef<HTMLDivElement | null>(null); //
 
-  //   if (!mirrorRef.current) {
-  //   mirrorRef.current = createMirror(textarea);
-  // }
+  useEffect(() => {
+    const handleResize = () => {
+      const textarea = textareaRef.current;
+      const mirror = mirrorRef.current;
 
-  // const mirror = mirrorRef.current;
+      if (!textarea || !mirror) return;
+
+      mirror.style.width = textarea.offsetWidth + "px";
+
+      const cursor = textarea.selectionStart;
+      const value = textarea.value;
+
+      updateMirror(mirror, textarea, value, cursor);
+
+      const caretCoords = getCaretCoordinates(mirror);
+
+      if (caretCoords) {
+        setCaret({
+          left: caretCoords.left,
+          top: caretCoords.bottom,
+        });
+      }
+    };
+
+    window.addEventListener("resize", handleResize); //
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
+    const active = document.querySelector(".dropdown .active");
+    active?.scrollIntoView({
+      block: "nearest",
+    });
+  }, [activeIndex]);
 
   //Set states while symbol typing:
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -29,7 +59,7 @@ function Textarea() {
 
     setText(value);
 
-    const textarea = textareaRef.current; //duplication - ?
+    const textarea = textareaRef.current;
     if (!textarea) return;
     textarea.style.height = "auto";
     textarea.style.height = textarea.scrollHeight + "px";
@@ -42,15 +72,12 @@ function Textarea() {
       return;
     }
 
-    //put mirrorDiv, mirrorDiv.text = beforeCursor
-    // putMirrorDiv(textareaRef, cursor, beforeCursor);
-
     if (!mirrorRef.current) {
       mirrorRef.current = createMirror(textarea);
     }
 
     const mirror = mirrorRef.current;
-    updateMirror(mirror, value, cursor);
+    updateMirror(mirror, textarea, value, cursor);
     const caretCoords = getCaretCoordinates(mirror);
 
     if (caretCoords) {
@@ -60,7 +87,7 @@ function Textarea() {
       });
     }
 
-    const query = match[1]; // why not match[0]: match is array like ["@to", "to"], and we need text after "@".
+    const query = match[1]; // match[0] is a full match (ex.: "@to"), but we need a caption grop (ex.: "to")
 
     const filtered = users.filter(
       (u) =>
@@ -73,7 +100,7 @@ function Textarea() {
     setIsOpen(filtered.length > 0);
   };
 
-  //Paste username:
+  //Insert the username:
   const insertMention = (username: string) => {
     const textarea = textareaRef.current;
     if (!textarea) return;
@@ -91,20 +118,20 @@ function Textarea() {
     setIsOpen(false);
   };
 
-  //Choosing a username by keys
+  //List reactions on pressing keys:
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (!isOpen) return;
 
     if (e.key === "ArrowDown") {
-      e.preventDefault(); //// to prevent reaction to textarea?
-      setActiveIndex((prev) => (prev + 1) % suggestions.length);
+      e.preventDefault();
+      setActiveIndex((prev) =>
+        prev < suggestions.length - 1 ? prev + 1 : prev,
+      );
     }
 
     if (e.key === "ArrowUp") {
       e.preventDefault();
-      setActiveIndex((prev) =>
-        prev === 0 ? suggestions.length - 1 : prev - 1,
-      );
+      setActiveIndex((prev) => (prev > 0 ? prev - 1 : prev));
     }
 
     if (e.key === "Enter") {
@@ -138,6 +165,7 @@ function Textarea() {
           }}
         >
           {suggestions.map((user, index) => {
+            const firstLetter = user.fullname[0];
             const secondLetterMatch = user.fullname.match(/\s(\w)/); //first letter after whitespace
             const secondLetter = secondLetterMatch ? secondLetterMatch[1] : "";
 
@@ -150,12 +178,11 @@ function Textarea() {
                 <p className="avatar">
                   {user.avatar || (
                     <span>
-                      {user.fullname[0]}
+                      {firstLetter}
                       {secondLetter}
                     </span>
                   )}
                 </p>
-
                 <p className="fullname">{user.fullname}</p>
                 <p className="username">{"@" + user.username}</p>
               </li>

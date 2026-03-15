@@ -6,7 +6,7 @@ ul {
   padding: 0;
   background: #80808038;
   margin: 0;
-  max-height: 200px;
+  max-height: 16em; //4 items
   overflow-y: auto;
   li {
     display: flex;
@@ -40,12 +40,8 @@ ul {
 
 .mirror {
   opacity: 0.5;
-  position: absolute;
-  top: 0;
-  left: 0;
   background: wheat;
 
-  white-space: pre-wrap;
   word-wrap: break-word;
   overflow: hidden;
 }
