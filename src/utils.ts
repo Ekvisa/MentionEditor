@@ -1,15 +1,4 @@
-//   const ImportantProperties = [
-//     "fontFamily",
-//     "fontSize",
-//     "fontWeight",
-//     "fontStyle",
-//     "letterSpacing",
-//     "lineHeight",
-//     "padding",
-//     "textTransform",
-//     "textIndent",
-//     "boxSizing",
-//   ];
+export type Caret = { top: number; left: number; bottom: number };
 
 function copyProperties(
   source: HTMLElement,
@@ -17,7 +6,6 @@ function copyProperties(
   properties: string[],
 ) {
   const computedStyle = getComputedStyle(source);
-
   properties.forEach((property) => {
     target.style.setProperty(
       property,
@@ -42,26 +30,11 @@ export function createMirror(textarea: HTMLTextAreaElement) {
     "textIndent",
   ];
   copyProperties(textarea, mirror, ImportantProperties);
-
-  //   const style = window.getComputedStyle(textarea);
-
-  //   mirror.style.top = textarea.offsetTop + "px";
-  //   mirror.style.left = textarea.offsetLeft + "px";
-
-  //   mirror.style.width = textarea.offsetWidth + "px";
-  //   mirror.style.height = textarea.offsetHeight + "px";
-  //    mirror.scrollTop = textarea.scrollTop;//
-
-  //   mirror.style.whiteSpace = "pre-wrap";
-
-  //   mirror.style.visibility = "hidden"; - return at the end
-
   textarea.parentElement?.appendChild(mirror);
-
   return mirror;
 }
 
-//If someone enter "<span id="caret"></span>" or so:
+//If someone would enter "<span id="caret"></span>" or so:
 function escapeHtml(text: string) {
   return text
     .replace(/&/g, "&amp;") //
@@ -82,22 +55,8 @@ export function updateMirror(
     escapeHtml(before) + '<span id="caret"></span>' + escapeHtml(after);
   mirror.style.width = textarea.offsetWidth + "px";
   mirror.style.height = textarea.offsetHeight + "px";
-  mirror.scrollTop = textarea.scrollTop; //
+  mirror.scrollTop = textarea.scrollTop;
 }
-
-// export function getCaretCoordinates(mirror: HTMLDivElement) {
-//   const caret = mirror.querySelector("#caret");
-
-//   if (!caret) return null;
-
-//   const rect = caret.getBoundingClientRect();
-
-//   return {
-//     top: rect.top,
-//     left: rect.left,
-//     bottom: rect.bottom,
-//   };
-// }
 
 export function getCaretCoordinates(
   mirror: HTMLDivElement,
@@ -105,12 +64,9 @@ export function getCaretCoordinates(
 ) {
   const parent = textarea.parentElement;
   const caret = mirror.querySelector("#caret");
-
   if (!caret || !parent) return null;
-
   const caretRect = caret.getBoundingClientRect();
   const parentRect = parent.getBoundingClientRect();
-
   return {
     top: caretRect.top - parentRect.top,
     left: caretRect.left - parentRect.left,

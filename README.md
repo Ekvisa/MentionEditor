@@ -1,73 +1,50 @@
-# React + TypeScript + Vite
+# 💬 Mention Editor
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A React component that implements **@mentions** autocomplete inside a textarea, similar to the behavior in social media or chat applications.
 
-Currently, two official plugins are available:
+When a user types **@**, a dropdown list of users appears.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Users can navigate the list with the keyboard or mouse and insert a mention into the text.
 
-## React Compiler
+## ✨ Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Autocomplete triggered by @
 
-## Expanding the ESLint configuration
+- Keyboard navigation (↑ ↓ Enter)
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- Mouse selection
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- Dropdown positioned near the caret
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+- Closes when clicking outside
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+
+
+## 🛠 Technologies
+
+- React
+
+- TypeScript
+
+- SCSS
+
+## ⚙️ Installation
+
+Clone the repository:
+```
+git clone <repo-url>
+cd <project>
+```
+Install dependencies:
+```
+npm install
+```
+Run the project:
+```
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 🪞 How it works
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+ 
+To position the dropdown correctly, the caret coordinates are calculated using a **mirror element technique**, which replicates the textarea content in a hidden div and measures the caret position in the DOM.

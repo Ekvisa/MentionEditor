@@ -44,8 +44,6 @@
 }
 
 .mirror {
-  opacity: 0.5;
-  background: wheat;
   word-wrap: break-word;
   overflow: hidden;
   position: absolute;
@@ -53,4 +51,7 @@
   right: 0;
   box-sizing: border-box;
   white-space: pre-wrap;
+  visibility: hidden;
+  // opacity: 0.5;
+  // background: wheat;
 }

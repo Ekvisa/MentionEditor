@@ -1,20 +1,23 @@
 import "./Textarea.scss";
 import { users } from "../../users";
 import { useEffect, useRef, useState } from "react";
-import { createMirror, getCaretCoordinates, updateMirror } from "../../utils";
+import {
+  createMirror,
+  getCaretCoordinates,
+  updateMirror,
+  type Caret,
+} from "../../utils";
 
 function Textarea() {
   const [text, setText] = useState("");
   const [suggestions, setSuggestions] = useState(users);
   const [isOpen, setIsOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
-
-  const [caret, setCaret] = useState<{ left: number; top: number } | null>(
-    null,
-  );
+  const [caret, setCaret] = useState<Caret | null>(null);
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const mirrorRef = useRef<HTMLDivElement | null>(null); //
+  const mirrorRef = useRef<HTMLDivElement>(null);
+  const listRef = useRef<HTMLUListElement>(null);
 
   useEffect(() => {
     const handleResize = () => {
@@ -31,17 +34,11 @@ function Textarea() {
       updateMirror(mirror, textarea, value, cursor);
 
       const caretCoords = getCaretCoordinates(mirror, textarea);
-
       if (caretCoords) {
-        setCaret({
-          left: caretCoords.left,
-          top: caretCoords.bottom,
-        });
+        setCaret(caretCoords);
       }
     };
-
-    window.addEventListener("resize", handleResize); //
-
+    window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
@@ -81,10 +78,7 @@ function Textarea() {
     const caretCoords = getCaretCoordinates(mirror, textarea);
 
     if (caretCoords) {
-      setCaret({
-        left: caretCoords.left,
-        top: caretCoords.bottom,
-      });
+      setCaret(caretCoords);
     }
 
     const query = match[1]; // match[0] is a full match (ex.: "@to"), but we need a caption grop (ex.: "to")
@@ -104,16 +98,9 @@ function Textarea() {
   const insertMention = (username: string) => {
     const textarea = textareaRef.current;
     if (!textarea) return;
-
     const cursor = textarea.selectionStart;
-
-    const before = text.slice(0, cursor); //// text is ?
-    const after = text.slice(cursor);
-
-    const newBefore = before.replace(/@(\w*)$/, `@${username} `); ////
-
-    const newText = newBefore + after;
-
+    const before = text.slice(0, cursor);
+    const newText = before.replace(/@(\w*)$/, `@${username} `);
     setText(newText);
     setIsOpen(false);
   };
@@ -144,6 +131,19 @@ function Textarea() {
     }
   };
 
+  //Hide the list if click outside it:
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (listRef.current && !listRef.current.contains(e.target as Node)) {
+        setIsOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
     <div className="wrapper wrapper_textarea">
       <textarea
@@ -158,10 +158,10 @@ function Textarea() {
       {isOpen && caret && (
         <ul
           className="dropdown"
+          ref={listRef}
           style={{
             left: `${caret.left}px`,
             top: `${caret.top}px`,
-            // position: "fixed", // ?
           }}
         >
           {suggestions.map((user, index) => {
