@@ -100,7 +100,8 @@ function Textarea() {
     if (!textarea) return;
     const cursor = textarea.selectionStart;
     const before = text.slice(0, cursor);
-    const newText = before.replace(/@(\w*)$/, `@${username} `);
+    const after = text.slice(cursor);
+    const newText = before.replace(/@(\w*)$/, `@${username} `) + after;
     setText(newText);
     setIsOpen(false);
   };
